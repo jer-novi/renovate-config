@@ -1,0 +1,58 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Gedeelde Renovate-basis voor al mijn repo's (Java/Spring Boot, pnpm/npm, Docker, GitHub Actions)",
+  "extends": [
+    "config:recommended",
+    "group:springBoot",
+    ":dependencyDashboard",
+    ":semanticCommitsDisabled"
+  ],
+  "timezone": "Europe/Amsterdam",
+  "schedule": ["before 7am on monday"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 5,
+  "minimumReleaseAge": "3 days",
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 7am on the first day of the month"]
+  },
+  "packageRules": [
+    {
+      "description": "Major-updates altijd apart en handmatig nalopen (o.a. Spring Boot 3 -> 4)",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["needs-review"],
+      "automerge": false,
+      "dependencyDashboardApproval": false
+    },
+    {
+      "description": "Minor/patch van npm/pnpm-dependencies bundelen in één PR",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor and patch",
+      "groupSlug": "npm-minor-patch"
+    },
+    {
+      "description": "Minor/patch van overige Maven/Gradle-dependencies (niet Spring Boot) bundelen",
+      "matchManagers": ["maven", "gradle", "maven-wrapper", "gradle-wrapper"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": ["!/^org\\.springframework\\.boot/"],
+      "groupName": "java minor and patch",
+      "groupSlug": "java-minor-patch"
+    },
+    {
+      "description": "Minor/patch/digest van Docker-images (Dockerfile en docker-compose) bundelen",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "docker images",
+      "groupSlug": "docker-images"
+    },
+    {
+      "description": "Minor/patch/digest van GitHub Actions bundelen",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "github actions",
+      "groupSlug": "github-actions"
+    }
+  ]
+}
